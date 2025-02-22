@@ -36,7 +36,8 @@ public class Client implements Runnable {
             elapsedTime = System.currentTimeMillis() - elapsedTime;
 
         } catch (IOException e) {
-            System.out.println("Error");
+            System.err.println("Retrying connection");
+            run();
         }
     }
 }
