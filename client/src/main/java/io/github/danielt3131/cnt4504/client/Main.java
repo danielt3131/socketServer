@@ -1,27 +1,37 @@
 package io.github.danielt3131.cnt4504.client;
 
 import java.io.*;
-import java.time.Instant;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Date;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) throws InterruptedException, IOException {
-
         if (args.length == 2 && args[1].equals("-b")) {
             String[] line = args[0].split(":");
             for (int k = 0; k < 2; k++) {
                 for (int i = 1; i <= 6; i++) {
-                    for (int j = 0; j <= 25; j += 5) {
+                    for (int j = 0; j <= 100; j += 5) {
                         if (j == 0) {
                             processRequests(i, 1, line[0], Integer.parseInt(line[1]) + k, "result-" + k + ".txt");
+			    TimeUnit.SECONDS.sleep(1);
                         } else {
                             processRequests(i, j, line[0], Integer.parseInt(line[1]) + k, "result-" + k + ".txt");
+			    TimeUnit.SECONDS.sleep(1);
                         }
                     }
                 }
             }
+        } else if (args.length > 2 && args[1].equals("-t") && args[3].equals("-n")) {
+            String[] line = args[0].split(":");
+            ZonedDateTime dateTime = ZonedDateTime.now(ZoneId.of("America/New_York"));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy_HHmm");
+            processRequests(Integer.parseInt(args[2]), Integer.parseInt(args[4]), line[0], Integer.parseInt(line[1]), "result-" + formatter.format(dateTime));
         } else {
             System.out.println("Enter in the server ip and port");
             Scanner console = new Scanner(System.in);
@@ -59,11 +69,11 @@ public class Main {
         for (int i = 0; i < numThreads; i++) {
             threads[i].join();
             runtime += client[i].getElapsedTime();
-            writer.println(String.format("Thread %d: runtime %dms", i, client[i].getElapsedTime()));
+            //writer.println(String.format("Thread %d: runtime %dms", i, client[i].getElapsedTime()));
         }
         // Writes the elapsed time to file
-        writer.println("Total Turn around time" + runtime + "ms");
-        writer.println("Average Total Turn around time" + runtime/numThreads + "ms");
+        writer.println("Total Turn around time: " + runtime + "ms");
+        writer.println("Average Total Turn around time: " + runtime/numThreads + "ms");
         writer.println();
         writer.close();
     }
